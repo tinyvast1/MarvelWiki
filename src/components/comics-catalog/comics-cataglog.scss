@@ -1,0 +1,13 @@
+.comics-catalog {
+    margin-top: 49px;
+    &__container {
+        display: grid;
+        justify-content: space-between;
+        gap: 55px 67px;
+        grid-template-columns: repeat(4, auto);
+    }  
+    .btn {
+        display: block;
+        margin: 50px auto;
+    }
+}
