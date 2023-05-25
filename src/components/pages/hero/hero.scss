@@ -1,0 +1,31 @@
+.hero {
+    margin-top: 50px;
+    margin-bottom: 141px;
+    &__container {
+        display: flex;
+        align-items: flex-start;
+        gap: 0 50px;
+    }
+    &__name {
+        font-weight: 700;
+        font-size: 22px;
+        line-height: 29px;
+    }
+    &__img {
+        width: 293px;
+        height: 293px;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+    &__description {
+        width: 550px;
+        margin: 0;
+        margin-top: 25px;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 24px;
+    }
+}
