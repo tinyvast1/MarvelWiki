@@ -1,52 +1,42 @@
 import './random.scss'
 import randomBackground from '../../resources/images/random-background.png'
 import { useEffect, useState } from 'react'
-import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import Error from '../error/Error'
+import useMarvelService from '../../services/MarvelService';
 
 const Random = () => {
-    const [char, setChar] = useState();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
+    const [char, setChar] = useState({thumbnail: ''});
+    const {loading, error, getCharacter, clearError} = useMarvelService();
+    
     useEffect(() => {
         updateChar();
     }, [])
 
-    const marvelService = new MarvelService();
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-    }
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
     }
 
     const updateChar = () => {
+        clearError();
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        setLoading(true);
-        marvelService
-            .getCharacter(id)
+        getCharacter(id)
             .then(onCharLoaded)
-            .catch(onError)
     }
+
 
     const errorMessage = error ? <Error/> : null;
     const spinner = loading ? <Spinner/> : null;
     const content = !(loading || error) ? <View char={char}/> : null;
-
-
+    
     return (
         <section className="random">
             <div className="container random__container">
                 <div className="random-hero">
-                    {content}
                     {errorMessage}
                     {spinner}
+                    {content}
                 </div>
                 <div className="random-description">
                     <div className="random-description__title">Random character for today! <br /> Do you want to get to know him better?</div>

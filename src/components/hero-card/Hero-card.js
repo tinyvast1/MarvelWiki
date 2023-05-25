@@ -6,9 +6,9 @@ const HeroCard = (props) =>{
     const clazz = "hero-card" + (classNames ? classNames : '') + (selectedChar === id ? ' active' : ''),
     clazzImg = 'hero-card__img' + (classNamesImg);
     return (
-        <button key={id} data-id={id} className={clazz} onClick={() => onCharSelected(id)}>
+        <button data-id={id} className={clazz} onClick={() => onCharSelected(id)}>
             <div className={clazzImg}>
-                <img src={thumbnail} alt="" />
+                <img src={thumbnail} alt={name} />
             </div>
             <div className="hero-card__name">
                 <span>{name}</span>

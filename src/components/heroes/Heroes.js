@@ -2,30 +2,26 @@ import './heroes.scss'
 import HeroCard from "../hero-card/Hero-card"
 import HeroInforamation from '../hero-information/Hero-information'
 import { useState, useEffect} from 'react'
-import MarvelService from '../../services/MarvelService'
 import Spinner from '../spinner/Spinner'
 import Error from '../error/Error'
 import ErrorBoundary from '../errorBoundary/ErrorBoundary'
 import PropTypes from 'prop-types'
+import useMarvelService from '../../services/MarvelService'
 
 const Heroes = () => {
 
     const [chars, setChars] = useState(JSON.parse(localStorage.getItem('chars')) ? JSON.parse(localStorage.getItem('chars')).chars : []);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [selectedChar, setSelectedChar] = useState(null);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(JSON.parse(localStorage.getItem('chars')) ? JSON.parse(localStorage.getItem('chars')).offset : 210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     useEffect(() => {
         if (JSON.parse(localStorage.getItem('chars')) === null) {
-            onRequest();
+            onRequest(offset, true);
         } else {
-            setLoading(false);
-            setError(false);
             setNewItemLoading(false);
         }
     }, [])
@@ -34,21 +30,18 @@ const Heroes = () => {
         setSelectedChar(id);
     }
 
-    const onRequest = (offset) => {
-        setNewItemLoading(true)
-        marvelService
-            .getAllCharacters(offset)
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
+        getAllCharacters(offset)
             .then(onCharsLoaded)
-            .catch(onError)
     }
 
-    const onCharsLoaded = (newChars) => {
+    const onCharsLoaded = async (newChars) => {
         let ended = false;
         if (newChars < 9 ) {
             ended= true;
         }
         setChars(chars => [...chars, ...newChars]);
-        setLoading(false);
         setNewItemLoading(false);
         setOffset(offset => offset + 9);
         setCharEnded(ended)
@@ -56,14 +49,8 @@ const Heroes = () => {
         localStorage.setItem('chars', JSON.stringify({chars:[...chars, ...newChars], offset: offset + 9}));
     }
 
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-    }
-
     const pageError = error ? <Error/> : null;
-    const pageLoading = loading ? <Spinner/> : null;
-    const pageView = !(error || loading) ? <div className="heroes__catalog-wrapper"><View chars={chars} selectedChar={selectedChar} onCharSelected={onCharSelected}/></div> : null;
+    const pageLoading = loading && !newItemLoading ? <Spinner/> : null;
 
     return (
         <section className="heroes">
@@ -72,7 +59,9 @@ const Heroes = () => {
                         {pageError}
                         {pageLoading}
                         <ErrorBoundary>
-                            {pageView}
+                        <div className="heroes__catalog-wrapper">
+                            <View chars={chars} selectedChar={selectedChar} onCharSelected={onCharSelected}/>
+                        </div>
                         </ErrorBoundary>
                     <button className="btn btn-red btn-long"
                             disabled={newItemLoading}
@@ -88,9 +77,7 @@ const Heroes = () => {
 }
 
 const View = ({chars, onCharSelected, selectedChar}) => {
-        return (
-            chars.map(item => <HeroCard char={item} selectedChar={selectedChar} onCharSelected={onCharSelected}/>)
-        )
+        return chars.map(item => <HeroCard key={item.id} char={item} selectedChar={selectedChar} onCharSelected={onCharSelected}/>)
 }
 
 View.propTypes = {

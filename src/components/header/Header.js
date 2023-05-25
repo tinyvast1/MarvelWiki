@@ -1,3 +1,4 @@
+import { Link , NavLink} from 'react-router-dom'
 import Logo from '../logo/Logo'
 import './header.scss'
 
@@ -5,11 +6,19 @@ const Header = () => {
     return (
         <header className="header">
             <div className="container header__container">
-                <Logo/>
+                <Link to="/">
+                    <Logo/>
+                </Link>
                 <div className="header-switch">
-                    <button className='header-switch__btn active'>Characters</button>
+                    <NavLink 
+                    className='header-switch__btn' 
+                    activeclassname="active" 
+                    to="/">Characters</NavLink>
                     <span>/</span>
-                    <button className='header-switch__btn'>Comics</button>
+                    <NavLink 
+                    className='header-switch__btn' 
+                    activeclassname="active" 
+                    to="/comics">Comics</NavLink>
                 </div>
             </div>
 

@@ -10,10 +10,7 @@ import PropTypes from 'prop-types'
 
 const HeroInforamation = (props) =>  {
     const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
-
-    const marvelService = new MarvelService();
+    const {loading, error, getCharacter, clearError} = MarvelService();
 
     useEffect(() => {
         updateChar();
@@ -25,30 +22,23 @@ const HeroInforamation = (props) =>  {
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-    }
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
     }
 
     const updateChar = () => {
+        clearError();
         const {charId} = props;
         if (!charId) {
             return
         }
-        setLoading(true);
-        marvelService
-            .getCharacter(charId)
+        getCharacter(charId)
             .then(onCharLoaded)
-            .catch(onError);
     }
 
     const pageSceleton = char || loading || error ? null : <HeroInforamationSceleton/>;
     const pageError = error ? <Error/> : null;
     const pageLoading = loading ? <Spinner/> : null;
     const pageView = !(error || loading || !char) ? <View char={char}/> : null;
+
     return (
         <div className="hero-information">
             <div className="hero-information__wrapper">
@@ -94,7 +84,7 @@ const View = ({char}) => {
                         comics.map((item, i) => {
                             if (i < 10) {
                                 return (
-                                    <HeroInformationComics id={i} comics={item}/>
+                                    <HeroInformationComics key={i} comics={item}/>
                                 )
                             }
                         })

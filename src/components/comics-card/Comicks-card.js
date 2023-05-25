@@ -1,14 +1,16 @@
+import { Link } from 'react-router-dom';
 import './comics-card.scss'
 
-const ComicsCard = () => {
+const ComicsCard = ({comic}) => {
+    const {name, thumbnail:{thumbnail, classNamesImg},price, id} = comic;
     return (
-        <div className="comics-card">
-            <div className="comics-card__img">
-                <img src="https://loremflickr.com/225/346" alt="" />
+        <Link style={{textDecoration: 'none', color: '#000'}} to={`${id}`} state={comic} className="comics-card">
+            <div className={"comics-card__img" + classNamesImg}>
+                <img src={thumbnail} alt="" />
             </div>
-            <div className="comics-card__name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-            <div className="comics-card__price">9.99$</div>
-        </div>
+            <div className="comics-card__name">{name}</div>
+            <div className="comics-card__price">{price}</div>
+        </Link>
     )
 }
 
